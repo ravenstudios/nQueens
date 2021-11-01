@@ -1,3 +1,4 @@
+# Robert Dodson RavenStudios 11/1/21
 import math
 
 
@@ -9,61 +10,63 @@ n = 4;
 
 
 
-def place_queen():
+def place_queen(row):
+    if row > n:
+        return
+# loop through each col in a row and try to place a queen
+#  if backtracking start the loop at the next col that the previous result
 
-    for i in range(n * n):
+    for_start = row * n
+    for_stop = row * n + n
+
+    if len(result) > row:
+
+        for_start = result[row] + 1
+        result.pop()
+
+
+    for i in range(for_start, for_stop, 1):
         if check_is_col_safe(i) and check_is_row_safe(i) and check_is_diag_safe(i):
-            result.append(i)
+            # if we can place a queen the we place it and call place again with new row
+                    result.append(i)
+                    if len(result) == n:
+                        print(result)
+                        return
 
-        i += 1
+                    place_queen(row + 1)
+                    return
+    place_queen(row - 1)
 
-    print(result)
 
 
 def check_is_row_safe(pos):# returns true if safe to place in row
     row = math.floor(pos / n)
     col = pos % n
 
-    try:
-        if result[row]:
+    if pos in result:
             return False
-    except:
-        return True
+
+    return True
 
 
 
 def check_is_col_safe(pos):
+
     nums = []
     row = math.floor(pos / n)
     col = pos % n
 
-# build a list of numbers in the same col as pos.
-# remove all numbers < 0 and  > n²
-
-    # build all the numbers above pos
     for i in range(n):
-        x = pos + (i * n)
-        if  x < n * n and x != pos:
-            nums.append(x)
-        # builds all the nubers bellow pos
-        x = pos - (i * n)
-        if x > -1 and x != pos:
-            nums.append (x)
-    # returns true if result[col] is in nums
+        nums.append(col + (i * n))
+
     for num in nums:
-        try:
-            if result[col] == num:
-                return False
-        except:
-            return True
+        if num in result:
+            return False
 
-# # print(check_is_col_safe(0))
-# [ 0][ 1][ 2][ 3]
-# [ 4][ 5][ 6][ 7]
-# [ 8][ 9][10][11]
-# [12][13][14][15]
+    return True
+
+
 def check_is_diag_safe(pos):
-
     # check result list against pos
     nums = []
     row = math.floor(pos / n)
@@ -84,9 +87,4 @@ def check_is_diag_safe(pos):
     return True;
 
 
-# check_is_diag_foward_safe(11)
-#
-place_queen()
-# print(result)
-# # check_is_col_safe(9)
-#
+place_queen(0)
